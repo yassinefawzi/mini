@@ -9,12 +9,12 @@ export function useState(key, initialValue) {
   }
 
   function getState() {
-    return globalState[key]; // always fresh
+    return globalState[key];
   }
 
   function setState(newValue) {
     globalState[key] = newValue;
-    render(); // trigger re-render
+    render();
   }
 
 

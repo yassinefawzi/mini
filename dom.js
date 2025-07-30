@@ -68,23 +68,18 @@ function updateElement(parent, newVNode, oldVNode, index = 0) {
   const existing = parent.childNodes[index];
 
   if (!oldVNode) {
-    // No old virtual node, add new
     if (!existing) {
       parent.appendChild(createElement(newVNode));
     } else {
       parent.replaceChild(createElement(newVNode), existing);
     }
   } else if (!newVNode) {
-    // Remove old node
     if (existing) parent.removeChild(existing);
   } else if (isDifferent(newVNode, oldVNode)) {
-    // Replace changed node
     parent.replaceChild(createElement(newVNode), existing);
   } else if (newVNode.tag) {
-    // Update attributes
     updateAttributes(existing, newVNode.attrs || {}, oldVNode.attrs || {});
 
-    // Recursively update children
     const newChildren = newVNode.children || [];
     const oldChildren = oldVNode.children || [];
     const max = Math.max(newChildren.length, oldChildren.length);
