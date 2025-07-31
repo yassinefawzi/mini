@@ -3,7 +3,9 @@ import { useState } from "./state.js";
 
 function App() {
   const [count, setCount] = useState("count", 0);
-  const [count1, setCount1] = useState("count1", 0);
+  console.log(count);
+  
+ // const [count1, setCount1] = useState("count1", 0);
 
   return {
     tag: "div",
@@ -20,12 +22,12 @@ function App() {
         children: ["Update Count"],
       },
       { tag: "h2", children: ["Welcome"] },
-      { tag: "p", children: [`This is test #${count1}`] }, // 👈 call count1()
+      // { tag: "p", children: [`This is test #${count1}`] }, // 👈 call count1()
       {
         tag: "button",
         attrs: {
           id: "updateBtn1",
-          onclick: () => setCount1(count1 - 1), // 👈 call count1()
+          // onclick: () => setCount1(count1 - 1), // 👈 call count1()
         },
         children: ["Decrease Count1"],
       },

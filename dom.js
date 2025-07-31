@@ -26,6 +26,7 @@ export function createElement(vnode) {
   if (vnode.attrs) {
     for (const [key, value] of Object.entries(vnode.attrs)) {
       if (key.startsWith("on") && typeof value === "function") {
+        console.log(value);
         element.addEventListener(key.slice(2).toLowerCase(), value);
       } else {
         element.setAttribute(key, value);
@@ -55,6 +56,12 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
     if (oldAttrs[key] !== value) {
       domElement.setAttribute(key, value);
     }
+     if (key.startsWith("on") && typeof value === "function") {
+        console.log(value);
+        domElement.addEventListener(key.slice(2).toLowerCase(), value);
+      } else {
+        domElement.setAttribute(key, value);
+      }
   }
 
   for (const key of Object.keys(oldAttrs)) {
