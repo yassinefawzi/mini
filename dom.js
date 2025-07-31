@@ -26,7 +26,6 @@ export function createElement(vnode) {
   if (vnode.attrs) {
     for (const [key, value] of Object.entries(vnode.attrs)) {
       if (key.startsWith("on") && typeof value === "function") {
-        console.log(value);
         element.addEventListener(key.slice(2).toLowerCase(), value);
       } else {
         element.setAttribute(key, value);
@@ -53,23 +52,29 @@ function isDifferent(node1, node2) {
 
 function updateAttributes(domElement, newAttrs, oldAttrs) {
   for (const [key, value] of Object.entries(newAttrs)) {
-    if (oldAttrs[key] !== value) {
-      domElement.setAttribute(key, value);
-    }
-     if (key.startsWith("on") && typeof value === "function") {
-        console.log(value);
-        domElement.addEventListener(key.slice(2).toLowerCase(), value);
-      } else {
+    if (key.startsWith("on") && typeof value === "function") {
+      const eventType = key.slice(2).toLowerCase();
+      if (oldAttrs[key] && oldAttrs[key] !== value) {
+        domElement.removeEventListener(eventType, oldAttrs[key]);
+      }
+      domElement.addEventListener(eventType, value);
+    } else {
+      if (oldAttrs[key] !== value) {
         domElement.setAttribute(key, value);
       }
+    }
   }
-
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
-      domElement.removeAttribute(key);
+      if (key.startsWith("on") && typeof oldAttrs[key] === "function") {
+        domElement.removeEventListener(key.slice(2).toLowerCase(), oldAttrs[key]);
+      } else {
+        domElement.removeAttribute(key);
+      }
     }
   }
 }
+
 
 function updateElement(parent, newVNode, oldVNode, index = 0) {
   const existing = parent.childNodes[index];

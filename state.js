@@ -4,14 +4,11 @@ export let globalState = {};
 let listeners = {};
 
 export function useState(key, initialValue) {
-  if (!(key in globalState)) {
-    console.log('wslatr');
-    
+  if (!(key in globalState)) {    
     globalState[key] = initialValue;
   }
 
   function getState() {
-    
     return globalState[key];
   }
   
