@@ -1,13 +1,22 @@
+import { handleRoute } from "./route.js";
 
 let currentVDOM = null;
 let rootComponent = null;
-let rootContainer = null;
+export let rootContainer = null;
+export function getCurrentVDOM() {
+  return currentVDOM;
+}
+export function setCurrentVDOM(vdom) {
+  currentVDOM = vdom;
+}
 
 export function init(componentFunc, container) {
   rootComponent = componentFunc;
   rootContainer = container;
   currentVDOM = rootComponent();
   rootContainer.appendChild(createElement(currentVDOM));
+  window.addEventListener("hashchange", handleRoute);
+  window.addEventListener("load", handleRoute);
 }
 
 export function render() {
@@ -67,7 +76,10 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
       if (key.startsWith("on") && typeof oldAttrs[key] === "function") {
-        domElement.removeEventListener(key.slice(2).toLowerCase(), oldAttrs[key]);
+        domElement.removeEventListener(
+          key.slice(2).toLowerCase(),
+          oldAttrs[key]
+        );
       } else {
         domElement.removeAttribute(key);
       }
@@ -75,8 +87,7 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
   }
 }
 
-
-function updateElement(parent, newVNode, oldVNode, index = 0) {
+export function updateElement(parent, newVNode, oldVNode, index = 0) {
   const existing = parent.childNodes[index];
 
   if (!oldVNode) {

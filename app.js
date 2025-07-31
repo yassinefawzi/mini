@@ -1,10 +1,18 @@
-import { init } from "./dom.js";
+import { init} from "./dom.js";
 import { useState } from "./state.js";
+import { defineRoutes, navigateTo } from "./route.js";
+
+import About from "./about.js";
+
+defineRoutes({
+	"/": App,
+  "/about": About,
+});
 
 function App() {
   const [count, setCount] = useState("count", 0);
 
-   const [count1, setCount1] = useState("count1", 0);
+  const [count1, setCount1] = useState("count1", 0);
 
   return {
     tag: "div",
@@ -29,6 +37,17 @@ function App() {
           onclick: () => setCount1(count1 - 1),
         },
         children: ["Decrease Count1"],
+      },
+      {
+        tag: "div",
+        children: [
+          { tag: "h1", children: ["Home Page"] },
+          {
+            tag: "button",
+            attrs: { onClick: () => navigateTo("/about") },
+            children: ["Go to About"],
+          },
+        ],
       },
     ],
   };
