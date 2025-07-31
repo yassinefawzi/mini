@@ -15,8 +15,8 @@ export function init(componentFunc, container) {
   rootContainer = container;
   currentVDOM = rootComponent();
   rootContainer.appendChild(createElement(currentVDOM));
-  window.addEventListener("hashchange", handleRoute);
-  window.addEventListener("load", handleRoute);
+  window["hashchange"] = handleRoute;
+  window["load"] = handleRoute;
 }
 
 export function render() {
@@ -35,7 +35,7 @@ export function createElement(vnode) {
   if (vnode.attrs) {
     for (const [key, value] of Object.entries(vnode.attrs)) {
       if (key.startsWith("on") && typeof value === "function") {
-        element.addEventListener(key.slice(2).toLowerCase(), value);
+        element[key]= value;
       } else {
         element.setAttribute(key, value);
       }
@@ -66,7 +66,7 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
       if (oldAttrs[key] && oldAttrs[key] !== value) {
         domElement.removeEventListener(eventType, oldAttrs[key]);
       }
-      domElement.addEventListener(eventType, value);
+      domElement[key]= value;
     } else {
       if (oldAttrs[key] !== value) {
         domElement.setAttribute(key, value);
