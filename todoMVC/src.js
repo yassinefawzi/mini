@@ -94,7 +94,7 @@ function renderTodo() {
                       attrs: {
                         class: "toggle",
                         type: "checkbox",
-                        checked: todo.completed,
+                        // checked: todo.completed,
                         onchange: () => toggleTodo(index)
                       }
                     },
