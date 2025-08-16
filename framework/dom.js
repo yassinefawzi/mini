@@ -35,7 +35,9 @@ export function createElement(vnode) {
   if (vnode.attrs) {
     for (const [key, value] of Object.entries(vnode.attrs)) {
       if (key.startsWith("on") && typeof value === "function") {
-        element[key]= value;
+        element.addEventListener(key.toLowerCase().substring(2), value);
+      } else if (key === "value") {
+        element.value = value; // Direct property assignment for value
       } else {
         element.setAttribute(key, value);
       }
@@ -60,15 +62,18 @@ function isDifferent(node1, node2) {
 }
 
 function updateAttributes(domElement, newAttrs, oldAttrs) {
-  for (const [key, value] of Object.entries(newAttrs)) {
+ for (const [key, value] of Object.entries(newAttrs)) {
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.slice(2).toLowerCase();
       if (oldAttrs[key] && oldAttrs[key] !== value) {
         domElement.removeEventListener(eventType, oldAttrs[key]);
       }
-      domElement[key]= value;
+      domElement.addEventListener(eventType, value);
     } else {
-      if (oldAttrs[key] !== value) {
+      // Special handling for input value
+      if (key === "value" && domElement.value !== value) {
+        domElement.value = value;
+      } else if (oldAttrs[key] !== value) {
         domElement.setAttribute(key, value);
       }
     }
