@@ -17,6 +17,5 @@ export function useState(key, initialValue) {
     render();
   }
 
-
-  return [globalState[key], setState]; 
+  return [getState, setState]; // Now returning getter and setter functions
 }

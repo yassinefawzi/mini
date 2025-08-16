@@ -3,14 +3,20 @@ import { createElement, init, render } from "../framework/dom.js";
 import { useState } from "../framework/state.js";
 
 // Define state management for the todo app
-let [input, setInput] = useState("todoInput", "");
-let [todos, setTodos] = useState("todos", []);
+const [getInput, setInput] = useState("todoInput", "");
+const [getTodos, setTodos] = useState("todos", []);
 
 function handleKeyDown(e) {
-  if (e.key === "Enter" && input.trim()) {
-    setTodos([...todos, { text: input, completed: false }]);
+  console.log("current input:", getInput());
+  if (e.key === "Enter" && getInput().trim()) {
+    setTodos([...getTodos(), { text: getInput(), completed: false }]);
     setInput("");
   }
+}
+
+function handleInputChange(e) {
+  console.log("Setting input to:", e.target.value);
+  setInput(e.target.value);
 }
 
 // Define routes
@@ -20,6 +26,9 @@ defineRoutes({
 
 // Main component
 function renderTodo() {
+  const currentTodos = getTodos(); // Get current todos array
+  const currentInput = getInput(); // Get current input value
+
   return {
     tag: "section",
     attrs: {
@@ -45,10 +54,10 @@ function renderTodo() {
                   class: "new-todo",
                   id: "todo-input",
                   type: "text",
-                  value: input,
+                  value: currentInput,
                   placeholder: "What needs to be done?",
                   "data-testid": "text-input",
-                  oninput: (e) => setInput(e.target.value),
+                  oninput: handleInputChange,
                   onkeydown: handleKeyDown,
                 }
               },
@@ -72,7 +81,7 @@ function renderTodo() {
           {
             tag: "ul",
             attrs: { class: "todo-list" },
-            children: todos.map((todo, index) => ({
+            children: currentTodos.map((todo, index) => ({
               tag: "li",
               attrs: { class: todo.completed ? "completed" : "" },
               children: [
@@ -109,13 +118,15 @@ function renderTodo() {
 }
 
 function toggleTodo(index) {
-  const updatedTodos = [...todos];
+  const currentTodos = getTodos();
+  const updatedTodos = [...currentTodos];
   updatedTodos[index].completed = !updatedTodos[index].completed;
   setTodos(updatedTodos);
 }
 
 function removeTodo(index) {
-  setTodos(todos.filter((_, i) => i !== index));
+  const currentTodos = getTodos();
+  setTodos(currentTodos.filter((_, i) => i !== index));
 }
 
 // Initialize the app when DOM is ready
