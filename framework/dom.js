@@ -20,11 +20,11 @@ export function init(componentFunc, container) {
   rootContainer.appendChild(createElement(currentVDOM));
 
   console.log("root : ", rootComponent)
-  
+
   // Set up event listeners
   window.addEventListener("hashchange", handleRoute);
   window.addEventListener("load", handleRoute);
-  
+
   // Mark as initialized
   setInitialized();
 }
@@ -49,6 +49,8 @@ export function createElement(vnode) {
         element.addEventListener(key.toLowerCase().substring(2), value);
       } else if (key === "value") {
         element.value = value; // Direct property assignment for value
+      } else if (key === "checked") {
+        element.checked = value;  // ✅ FIX
       } else {
         element.setAttribute(key, value);
       }
@@ -73,7 +75,7 @@ function isDifferent(node1, node2) {
 }
 
 function updateAttributes(domElement, newAttrs, oldAttrs) {
- for (const [key, value] of Object.entries(newAttrs)) {
+  for (const [key, value] of Object.entries(newAttrs)) {
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.slice(2).toLowerCase();
       if (oldAttrs[key] && oldAttrs[key] !== value) {
