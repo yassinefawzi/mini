@@ -2,6 +2,7 @@ import { render } from "./dom.js";
 
 export let globalState = {};
 let listeners = {};
+let initialized = false;
 
 export function useState(key, initialValue) {
   if (!(key in globalState)) {    
@@ -14,8 +15,14 @@ export function useState(key, initialValue) {
   
   function setState(newValue) {
     globalState[key] = newValue;
-    render();
+    if (initialized) {
+      render();
+    }
   }
 
-  return [getState, setState]; // Now returning getter and setter functions
+  return [getState, setState];
+}
+
+export function setInitialized() {
+  initialized = true;
 }

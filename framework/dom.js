@@ -1,11 +1,14 @@
 import { handleRoute } from "./route.js";
+import { setInitialized } from "./state.js";
 
 let currentVDOM = null;
 let rootComponent = null;
 export let rootContainer = null;
+
 export function getCurrentVDOM() {
   return currentVDOM;
 }
+
 export function setCurrentVDOM(vdom) {
   currentVDOM = vdom;
 }
@@ -15,9 +18,17 @@ export function init(componentFunc, container) {
   rootContainer = container;
   currentVDOM = rootComponent();
   rootContainer.appendChild(createElement(currentVDOM));
-  window["hashchange"] = handleRoute;
-  window["load"] = handleRoute;
+
+  console.log("root : ", rootComponent)
+  
+  // Set up event listeners
+  window.addEventListener("hashchange", handleRoute);
+  window.addEventListener("load", handleRoute);
+  
+  // Mark as initialized
+  setInitialized();
 }
+
 
 export function render() {
   const nextVDOM = rootComponent();

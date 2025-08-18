@@ -3,13 +3,15 @@ import { updateElement, rootContainer, getCurrentVDOM, setCurrentVDOM } from "./
 let routes = {};
 
 export function defineRoutes(routeMap) {
+  console.log(routeMap)
   routes = routeMap;
+  handleRoute();
 }
 
 export function handleRoute() {
   const path = window.location.hash.slice(1) || "/";
   const component = routes[path];
-
+  console.log(component)
   if (component) {
     const newVDOM = component();
 
