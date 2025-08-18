@@ -66,7 +66,7 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
     if (key.startsWith("on") && typeof value === "function") {
       const eventType = key.slice(2).toLowerCase();
       if (oldAttrs[key] && oldAttrs[key] !== value) {
-        domElement.removeEventListener(eventType, oldAttrs[key]);
+        domElement[eventType] = null
       }
       domElement[eventType]=  value
     } else {
@@ -81,10 +81,7 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
       if (key.startsWith("on") && typeof oldAttrs[key] === "function") {
-        domElement.removeEventListener(
-          key.slice(2).toLowerCase(),
-          oldAttrs[key]
-        );
+        domElement[key] = null
       } else {
         domElement.removeAttribute(key);
       }
