@@ -22,8 +22,8 @@ export function init(componentFunc, container) {
   console.log("root : ", rootComponent)
 
   // Set up event listeners
-  window.addEventListener("hashchange", handleRoute);
-  window.addEventListener("load", handleRoute);
+  window.onhashchange = handleRoute;
+  window.onload = handleRoute;
 
   // Mark as initialized
   setInitialized();
@@ -46,7 +46,7 @@ export function createElement(vnode) {
   if (vnode.attrs) {
     for (const [key, value] of Object.entries(vnode.attrs)) {
       if (key.startsWith("on") && typeof value === "function") {
-        element.addEventListener(key.toLowerCase().substring(2), value);
+        element[key.toLowerCase()] = value;
       } else if (key === "value") {
         element.value = value; // Direct property assignment for value
       } else if (key === "checked") {
@@ -77,11 +77,10 @@ function isDifferent(node1, node2) {
 function updateAttributes(domElement, newAttrs, oldAttrs) {
   for (const [key, value] of Object.entries(newAttrs)) {
     if (key.startsWith("on") && typeof value === "function") {
-      const eventType = key.slice(2).toLowerCase();
-      if (oldAttrs[key] && oldAttrs[key] !== value) {
-        domElement.removeEventListener(eventType, oldAttrs[key]);
+      const eventName = key.toLowerCase();
+      if (oldAttrs[key] !== value) {
+        domElement[eventName] = value;
       }
-      domElement.addEventListener(eventType, value);
     } else {
       // Special handling for input properties
       if (key === "value") {
@@ -101,10 +100,8 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
       if (key.startsWith("on") && typeof oldAttrs[key] === "function") {
-        domElement.removeEventListener(
-          key.slice(2).toLowerCase(),
-          oldAttrs[key]
-        );
+        const eventName = key.toLowerCase();
+        domElement[eventName] = null;
       } else if (key === "checked") {
         // Ensure we remove the checked property if it's not in new attrs
         domElement.checked = false;
