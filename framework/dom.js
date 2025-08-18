@@ -83,14 +83,21 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
       }
       domElement.addEventListener(eventType, value);
     } else {
-      // Special handling for input value
-      if (key === "value" && domElement.value !== value) {
-        domElement.value = value;
+      // Special handling for input properties
+      if (key === "value") {
+        if (domElement.value !== value) {
+          domElement.value = value;
+        }
+      } else if (key === "checked") {
+        // Always update checked property directly
+        domElement.checked = value;
       } else if (oldAttrs[key] !== value) {
         domElement.setAttribute(key, value);
       }
     }
   }
+  
+  // Remove old attributes
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
       if (key.startsWith("on") && typeof oldAttrs[key] === "function") {
@@ -98,12 +105,16 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
           key.slice(2).toLowerCase(),
           oldAttrs[key]
         );
+      } else if (key === "checked") {
+        // Ensure we remove the checked property if it's not in new attrs
+        domElement.checked = false;
       } else {
         domElement.removeAttribute(key);
       }
     }
   }
 }
+
 
 export function updateElement(parent, newVNode, oldVNode, index = 0) {
   const existing = parent.childNodes[index];

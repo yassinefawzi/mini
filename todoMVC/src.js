@@ -61,7 +61,7 @@ function saveEditedTask(id) {
     if (todo.id === id) {
       return {
         ...todo,
-        text: getEditingText().trim() || todo.text, // Fallback to original if empty
+        text: getEditingText().trim() || todo.text,
       };
     }
     return todo;
@@ -79,9 +79,6 @@ function handleEditKeyDown(e, id) {
 }
 
 function filterTodos(todos, filter) {
-  console.log("todos : ", todos);
-  console.log("filter : ", filter);
-  
   switch (filter) {
     case "Active": return todos.filter(todo => !todo.completed);
     case "Completed": return todos.filter(todo => todo.completed);
@@ -97,9 +94,6 @@ function renderTodo() {
   const filteredTasks = filterTodos(currentTodos, selectedFilter);
   const editingID = getEditingID();
   const allCompleted = currentTodos.length > 0 && currentTodos.every(t => t.completed);
-
-  console.log("filtered : ", filteredTasks);
-  
 
   return {
     tag: "section",
@@ -152,7 +146,7 @@ function renderTodo() {
           "data-testid": "main"
         },
         children: [
-          ...(filteredTasks.length ? [{
+          ...(currentTodos.length > 0 ? [{
             tag: "div",
             attrs: { class: "toggle-all-container" },
             children: [
