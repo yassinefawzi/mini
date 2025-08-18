@@ -128,9 +128,5 @@ function removeTodo(index) {
   const currentTodos = getTodos();
   setTodos(currentTodos.filter((_, i) => i !== index));
 }
-
-// Initialize the app when DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
-  const appContainer = document.getElementById("app");
-  init(renderTodo, appContainer);
-});
+const appContainer = document.getElementById("app");
+init(renderTodo, appContainer);
