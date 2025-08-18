@@ -112,6 +112,44 @@ function renderTodo() {
             }))
           }
         ]
+      },
+      {
+        tag: "footer",
+        attrs: {
+          class: "footer",
+          "data-testid": "footer",
+          children: [
+            {
+              tag: "span",
+              attrs: {
+                class: "todo-count",
+              },
+              children: [
+                `${currentTodos.filter(t => !t.completed).length} items left!`,
+              ],
+            },
+            {
+              tag: "ul",
+              attrs: {
+                class: "filters",
+                "data-testid": "footer-navigation"
+              },
+              children: [
+                {
+                  tag: "li",
+                  children: [
+                    {
+                      tag: "a",
+                      attrs: {
+                        class: selectedFilter === "All" ? "selected" : "", href: "/" 
+                      },
+                    }
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       }
     ]
   };
