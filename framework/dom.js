@@ -35,7 +35,7 @@ export function createElement(vnode) {
   if (vnode.attrs) {
     for (const [key, value] of Object.entries(vnode.attrs)) {
       if (key.startsWith("on") && typeof value === "function") {
-        element.addEventListener(key.toLowerCase().substring(2), value);
+        element[key] = value
       } else if (key === "value") {
         element.value = value; // Direct property assignment for value
       } else {
@@ -68,7 +68,7 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
       if (oldAttrs[key] && oldAttrs[key] !== value) {
         domElement.removeEventListener(eventType, oldAttrs[key]);
       }
-      domElement.addEventListener(eventType, value);
+      domElement[eventType]=  value
     } else {
       // Special handling for input value
       if (key === "value" && domElement.value !== value) {
