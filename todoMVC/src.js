@@ -28,23 +28,23 @@ function handleInputChange(e) {
 }
 
 function toggleTodo(id) {
-  const updatedTodos = getTodos().map(todo =>
+  const updatedTodos = getTodos().map((todo) =>
     todo.id === id ? { ...todo, completed: !todo.completed } : todo
   );
   setTodos(updatedTodos);
 }
 
 function removeTodo(id) {
-  setTodos(getTodos().filter(todo => todo.id !== id));
+  setTodos(getTodos().filter((todo) => todo.id !== id));
 }
 
 function clearCompleted() {
-  setTodos(getTodos().filter(todo => !todo.completed));
+  setTodos(getTodos().filter((todo) => !todo.completed));
 }
 
 function handleAllToggle() {
-  const allCompleted = getTodos().every(todo => todo.completed);
-  const updatedTodos = getTodos().map(todo => ({
+  const allCompleted = getTodos().every((todo) => todo.completed);
+  const updatedTodos = getTodos().map((todo) => ({
     ...todo,
     completed: !allCompleted,
   }));
@@ -57,7 +57,7 @@ function startEditing(todo) {
 }
 
 function saveEditedTask(id) {
-  const updatedTodos = getTodos().map(todo => {
+  const updatedTodos = getTodos().map((todo) => {
     if (todo.id === id) {
       return {
         ...todo,
@@ -80,9 +80,12 @@ function handleEditKeyDown(e, id) {
 
 function filterTodos(todos, filter) {
   switch (filter) {
-    case "Active": return todos.filter(todo => !todo.completed);
-    case "Completed": return todos.filter(todo => todo.completed);
-    default: return todos;
+    case "Active":
+      return todos.filter((todo) => !todo.completed);
+    case "Completed":
+      return todos.filter((todo) => todo.completed);
+    default:
+      return todos;
   }
 }
 
@@ -93,20 +96,21 @@ function renderTodo() {
   const selectedFilter = getSelectedFilter();
   const filteredTasks = filterTodos(currentTodos, selectedFilter);
   const editingID = getEditingID();
-  const allCompleted = currentTodos.length > 0 && currentTodos.every(t => t.completed);
+  const allCompleted =
+    currentTodos.length > 0 && currentTodos.every((t) => t.completed);
 
   return {
     tag: "section",
     attrs: {
       class: "todoapp",
-      id: "root"
+      id: "root",
     },
     children: [
       {
         tag: "header",
         attrs: {
           class: "header",
-          "data-testid": "header"
+          "data-testid": "header",
         },
         children: [
           { tag: "h1", children: ["todos"] },
@@ -125,189 +129,213 @@ function renderTodo() {
                   "data-testid": "text-input",
                   oninput: handleInputChange,
                   onkeydown: handleKeyDown,
-                }
+                },
               },
               {
                 tag: "label",
                 attrs: {
                   class: "visually-hidden",
-                  for: "todo-input"
+                  for: "todo-input",
                 },
-                children: ["New Todo Input"]
-              }
-            ]
-          }
-        ]
+                children: ["New Todo Input"],
+              },
+            ],
+          },
+        ],
       },
       {
         tag: "section",
         attrs: {
           class: "main",
-          "data-testid": "main"
+          "data-testid": "main",
         },
         children: [
-          ...(currentTodos.length > 0 ? [{
-            tag: "div",
-            attrs: { class: "toggle-all-container" },
-            children: [
-              {
-                tag: "input",
-                attrs: {
-                  class: "toggle-all",
-                  type: "checkbox",
-                  id: "toggle-all",
-                  "data-testid": "toggle-all",
-                  onclick: handleAllToggle,
-                  checked: allCompleted
-                }
-              },
-              {
-                tag: "label",
-                attrs: {
-                  class: "toggle-all-label",
-                  for: "toggle-all"
-                }
-              }
-            ]
-          }] : []),
-          {
-            tag: "ul",
-            attrs: {
-              class: "todo-list",
-              "data-testid": "todo-list"
-            },
-            children: filteredTasks.map(todo => ({
-              tag: "li",
-              attrs: {
-                class: `${todo.completed ? "completed" : ""} ${editingID === todo.id ? "editing" : ""}`,
-                "data-testid": "todo-item"
-              },
-              children: [
-                editingID === todo.id ? {
-                  tag: "input",
-                  attrs: {
-                    class: "edit",
-                    type: "text",
-                    value: getEditingText(),
-                    oninput: (e) => setEditingText(e.target.value),
-                    onkeydown: (e) => handleEditKeyDown(e, todo.id),
-                    onblur: () => saveEditedTask(todo.id),
-                    autofocus: true
-                  }
-                } : {
+          ...(currentTodos.length > 0
+            ? [
+                {
                   tag: "div",
-                  attrs: { class: "view" },
+                  attrs: { class: "toggle-all-container" },
                   children: [
                     {
                       tag: "input",
                       attrs: {
-                        class: "toggle",
+                        class: "toggle-all",
                         type: "checkbox",
-                        checked: todo.completed,
-                        onchange: () => toggleTodo(todo.id),
-                        "data-testid": "todo-item-toggle"
-                      }
+                        id: "toggle-all",
+                        "data-testid": "toggle-all",
+                        onclick: handleAllToggle,
+                        checked: allCompleted,
+                      },
                     },
                     {
                       tag: "label",
                       attrs: {
-                        ondblclick: () => startEditing(todo),
-                        "data-testid": "todo-item-label"
+                        class: "toggle-all-label",
+                        for: "toggle-all",
                       },
-                      children: [todo.text]
                     },
-                    {
-                      tag: "button",
-                      attrs: {
-                        class: "destroy",
-                        onclick: () => removeTodo(todo.id),
-                        "data-testid": "todo-item-button"
-                      }
-                    }
-                  ]
-                }
+                  ],
+                },
               ]
-            }))
-          }
-        ]
-      },
-      ...(currentTodos.length > 0 ? [{
-        tag: "footer",
-        attrs: {
-          class: "footer",
-          "data-testid": "footer"
-        },
-        children: [
-          {
-            tag: "span",
-            attrs: { class: "todo-count" },
-            children: [`${currentTodos.filter(t => !t.completed).length} items left!`]
-          },
+            : []),
           {
             tag: "ul",
             attrs: {
-              class: "filters",
-              "data-testid": "footer-navigation"
+              class: "todo-list",
+              "data-testid": "todo-list",
             },
-            children: [
-              {
-                tag: "li",
-                children: [{
-                  tag: "a",
-                  attrs: {
-                    class: selectedFilter === "All" ? "selected" : "",
-                    href: "#/",
-                    onclick: (e) => {
-                      e.preventDefault();
-                      navigateTo("/");
-                    }
-                  },
-                  children: ["All"]
-                }]
+            children: filteredTasks.map((todo) => ({
+              tag: "li",
+              attrs: {
+                class: `${todo.completed ? "completed" : ""} ${
+                  editingID === todo.id ? "editing" : ""
+                }`,
+                "data-testid": "todo-item",
               },
-              {
-                tag: "li",
-                children: [{
-                  tag: "a",
-                  attrs: {
-                    class: selectedFilter === "Active" ? "selected" : "",
-                    href: "#/active",
-                    onclick: (e) => {
-                      e.preventDefault();
-                      navigateTo("/active");
+              children: [
+                editingID === todo.id
+                  ? {
+                      tag: "input",
+                      attrs: {
+                        class: "edit",
+                        type: "text",
+                        value: getEditingText(),
+                        oninput: (e) => setEditingText(e.target.value),
+                        onkeydown: (e) => handleEditKeyDown(e, todo.id),
+                        onblur: () => saveEditedTask(todo.id),
+                        autofocus: true,
+                      },
                     }
-                  },
-                  children: ["Active"]
-                }]
-              },
-              {
-                tag: "li",
-                children: [{
-                  tag: "a",
-                  attrs: {
-                    class: selectedFilter === "Completed" ? "selected" : "",
-                    href: "#/completed",
-                    onclick: (e) => {
-                      e.preventDefault();
-                      navigateTo("/completed");
-                    }
-                  },
-                  children: ["Completed"]
-                }]
-              }
-            ]
+                  : {
+                      tag: "div",
+                      attrs: { class: "view" },
+                      children: [
+                        {
+                          tag: "input",
+                          attrs: {
+                            class: "toggle",
+                            type: "checkbox",
+                            checked: todo.completed,
+                            onchange: () => toggleTodo(todo.id),
+                            "data-testid": "todo-item-toggle",
+                          },
+                        },
+                        {
+                          tag: "label",
+                          attrs: {
+                            ondblclick: () => startEditing(todo),
+                            "data-testid": "todo-item-label",
+                          },
+                          children: [todo.text],
+                        },
+                        {
+                          tag: "button",
+                          attrs: {
+                            class: "destroy",
+                            onclick: () => removeTodo(todo.id),
+                            "data-testid": "todo-item-button",
+                          },
+                        },
+                      ],
+                    },
+              ],
+            })),
           },
-          {
-            tag: "button",
-            attrs: {
-              class: "clear-completed",
-              onclick: clearCompleted
+        ],
+      },
+      ...(currentTodos.length > 0
+        ? [
+            {
+              tag: "footer",
+              attrs: {
+                class: "footer",
+                "data-testid": "footer",
+              },
+              children: [
+                {
+                  tag: "span",
+                  attrs: { class: "todo-count" },
+                  children: [
+                    `${
+                      currentTodos.filter((t) => !t.completed).length
+                    } items left!`,
+                  ],
+                },
+                {
+                  tag: "ul",
+                  attrs: {
+                    class: "filters",
+                    "data-testid": "footer-navigation",
+                  },
+                  children: [
+                    {
+                      tag: "li",
+                      children: [
+                        {
+                          tag: "a",
+                          attrs: {
+                            class: selectedFilter === "All" ? "selected" : "",
+                            href: "#/",
+                            onclick: (e) => {
+                              e.preventDefault();
+                              navigateTo("/");
+                            },
+                          },
+                          children: ["All"],
+                        },
+                      ],
+                    },
+                    {
+                      tag: "li",
+                      children: [
+                        {
+                          tag: "a",
+                          attrs: {
+                            class:
+                              selectedFilter === "Active" ? "selected" : "",
+                            href: "#/active",
+                            onclick: (e) => {
+                              e.preventDefault();
+                              navigateTo("/active");
+                            },
+                          },
+                          children: ["Active"],
+                        },
+                      ],
+                    },
+                    {
+                      tag: "li",
+                      children: [
+                        {
+                          tag: "a",
+                          attrs: {
+                            class:
+                              selectedFilter === "Completed" ? "selected" : "",
+                            href: "#/completed",
+                            onclick: (e) => {
+                              e.preventDefault();
+                              navigateTo("/completed");
+                            },
+                          },
+                          children: ["Completed"],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  tag: "button",
+                  attrs: {
+                    class: "clear-completed",
+                    onclick: clearCompleted,
+                  },
+                  children: ["Clear completed"],
+                },
+              ],
             },
-            children: ["Clear completed"]
-          }
-        ]
-      }] : [])
-    ]
+          ]
+        : []),
+    ],
   };
 }
 

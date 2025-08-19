@@ -13,29 +13,27 @@ export function setCurrentVDOM(vdom) {
   currentVDOM = vdom;
 }
 
+//init function to set up the root component and container
 export function init(componentFunc, container) {
   rootComponent = componentFunc;
   rootContainer = container;
   currentVDOM = rootComponent();
   rootContainer.appendChild(createElement(currentVDOM));
 
-  console.log("root : ", rootComponent)
-
-  // Set up event listeners
   window.onhashchange = handleRoute;
   window.onload = handleRoute;
 
-  // Mark as initialized
   setInitialized();
 }
 
-
+// render function to update the current VDOM
 export function render() {
   const nextVDOM = rootComponent();
   updateElement(rootContainer, nextVDOM, currentVDOM);
   currentVDOM = nextVDOM;
 }
 
+// createElement function to convert VDOM to actual DOM elements
 export function createElement(vnode) {
   if (typeof vnode === "string") {
     return document.createTextNode(vnode);
@@ -48,9 +46,9 @@ export function createElement(vnode) {
       if (key.startsWith("on") && typeof value === "function") {
         element[key.toLowerCase()] = value;
       } else if (key === "value") {
-        element.value = value; // Direct property assignment for value
+        element.value = value;
       } else if (key === "checked") {
-        element.checked = value;  // ✅ FIX
+        element.checked = value;
       } else {
         element.setAttribute(key, value);
       }
@@ -74,6 +72,7 @@ function isDifferent(node1, node2) {
   );
 }
 
+// Function to update attributes of a DOM element
 function updateAttributes(domElement, newAttrs, oldAttrs) {
   for (const [key, value] of Object.entries(newAttrs)) {
     if (key.startsWith("on") && typeof value === "function") {
@@ -82,28 +81,24 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
         domElement[eventName] = value;
       }
     } else {
-      // Special handling for input properties
       if (key === "value") {
         if (domElement.value !== value) {
           domElement.value = value;
         }
       } else if (key === "checked") {
-        // Always update checked property directly
         domElement.checked = value;
       } else if (oldAttrs[key] !== value) {
         domElement.setAttribute(key, value);
       }
     }
   }
-  
-  // Remove old attributes
+
   for (const key of Object.keys(oldAttrs)) {
     if (!(key in newAttrs)) {
       if (key.startsWith("on") && typeof oldAttrs[key] === "function") {
         const eventName = key.toLowerCase();
         domElement[eventName] = null;
       } else if (key === "checked") {
-        // Ensure we remove the checked property if it's not in new attrs
         domElement.checked = false;
       } else {
         domElement.removeAttribute(key);
@@ -112,7 +107,7 @@ function updateAttributes(domElement, newAttrs, oldAttrs) {
   }
 }
 
-
+// Function to update the DOM element based on the new and old VDOM
 export function updateElement(parent, newVNode, oldVNode, index = 0) {
   const existing = parent.childNodes[index];
 
@@ -133,7 +128,7 @@ export function updateElement(parent, newVNode, oldVNode, index = 0) {
     const oldChildren = oldVNode.children || [];
     const max = Math.max(newChildren.length, oldChildren.length);
 
-    for (let i = 0; i < max; i++) {
+    for (let i = max - 1; i >= 0; i--) {
       updateElement(existing, newChildren[i], oldChildren[i], i);
     }
   }

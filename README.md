@@ -102,7 +102,6 @@ function counterReducer(state = initialState, action) {
 const store = createStore(counterReducer);
 
 store.subscribe(() => {
-    console.log("State updated:", store.getState());
 });
 
 store.dispatch({ type: "INCREMENT" });
